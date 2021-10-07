@@ -1,0 +1,90 @@
+
+
+sudo apt install snapd
+
+## uninstall    
+```
+microk8s.reset
+microk8s.stop
+sudo snap remove microk8s
+```
+
+## install  
+```
+sudo snap install microk8s --classic --channel=1.18
+sudo usermod -a -G microk8s $USER
+sudo chown -f -R $USER ~/.kube
+``` 
+
+## install add-ons  
+```
+microk8s.enable dns
+microk8s.enable rbac
+microk8s.enable storage
+microk8s.enable ingress
+```
+
+```
+sudo ufw allow in on cni0
+sudo ufw allow out on cni0
+
+ WARNING:  IPtables FORWARD policy is DROP. Consider enabling traffic forwarding with: sudo iptables -P FORWARD ACCEPT
+The change can be made persistent with: sudo apt-get install iptables-persistent
+WARNING:  Docker is installed.
+File "/etc/docker/daemon.json" does not exist.
+You should create it and add the following lines:
+{
+    "insecure-registries" : ["localhost:32000"]
+}
+and then restart docker with: sudo systemctl restart docker
+```
+
+
+## install cert-manager 
+microk8s.kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
+
+
+##  check you can get crtificate  
+##  apply staging_issur.yml
+microk8s.kubectl apply -f staging_issur.yml
+
+## check you can get 
+microk8s.kubectl get certificate -A
+
+
+## issues prod issur  
+get letsencrypt (not fo test.
+
+## apply  
+microk8s.kubectl apply -f prod_issuer.yml
+
+## check  
+microk8s.kubectl get certificate -A
+
+if READY == true, it is OK
+
+Create Namespace
+you can create it by command line, microk8s.kubectl create namespace banana
+
+
+##  deploy
+microk8s.kubectl apply -f example.yml
+
+## deploy the other apps
+## create test2.yml
+
+microk8s. apply -f test2.yml
+
+# The command you use frequent 
+microk8s.kubectl get deployment -A
+microk8s.kubectl get service -A
+microk8s.kubectl get certificate -A
+microk8s.kubectl describe certificate -A
+microk8s.kubectl apply -f example.yml
+microk8s.kubectl delete -f example.yml
+
+microk8s.kubectl rolleout restart deployment "deps" -n 3namespace"
+
+
+
+
